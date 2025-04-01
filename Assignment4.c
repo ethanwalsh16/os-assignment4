@@ -5,6 +5,8 @@
 #define BUFFER_SIZE 4
 #define REQUESTS 20
 
+void sort_list(int *list, int size);
+
 int main(int argc, char *argv[]) {
 
     // Verifying command line arguments
@@ -92,8 +94,93 @@ int main(int argc, char *argv[]) {
     // C-SCAN
 
     // LOOK
+	printf("\nLOOK DISK SCHEDULING ALGORITHM:\n\n");
+	
+	int *sorted_requests = malloc(REQUESTS * sizeof(int));
+	for(int i=0; i<REQUESTS; i++){
+		sorted_requests[i] = cylinder_numbers[i];
+	} // creating copy of array for look
+
+	sort_list(sorted_requests, REQUESTS);
+	
+	
+	// Finding starting point
+	if(strcmp(initial_disk_direction, "LEFT") == 0){
+
+		head_movements = abs(sorted_requests[0]-initial_disk_position) + abs(sorted_requests[0]-sorted_requests[REQUESTS-1]);
+		
+		int max_left = sorted_requests[0];
+		int max_left_idx = 0;
+		for(int i=1; i<REQUESTS; i++){
+			if(sorted_requests[i] > initial_disk_position){
+				break;			
+			}
+			if(sorted_requests[i] > max_left && sorted_requests[i] <= initial_disk_position){
+				max_left = sorted_requests[i];
+				max_left_idx = i;			
+			}
+		}
+		// Printing order
+		for(int i=max_left_idx; i>=0; i--){
+			printf("%d, ", sorted_requests[i]);
+		}
+		for(int i=max_left_idx+1; i<REQUESTS; i++){
+
+			if(i == REQUESTS-1){
+				printf("%d", sorted_requests[i]);
+			}else{
+				printf("%d, ", sorted_requests[i]);
+			}
+		}
+	}else{
+
+		head_movements = abs(sorted_requests[REQUESTS-1]-initial_disk_position) + abs(sorted_requests[0]-sorted_requests[REQUESTS-1]);
+		
+		int min_right = sorted_requests[REQUESTS-1];
+		int min_right_idx = REQUESTS-1;
+		for(int i=REQUESTS-2; i>=0; i--){
+			if(sorted_requests[i] < initial_disk_position){
+				break;
+			}
+			else if(sorted_requests[i] < min_right && sorted_requests[i] >= initial_disk_position){
+				min_right = sorted_requests[i];
+				min_right_idx = i;
+			}
+		}
+		// Printing order
+		for(int i=min_right_idx; i<REQUESTS; i++){
+			printf("%d, ", sorted_requests[i]);
+		}
+		for(int i=min_right_idx-1; i>=0; i--){
+			if(i == 0){
+				printf("%d", sorted_requests[i]);
+			}else{
+				printf("%d, ", sorted_requests[i]);
+			}
+		}
+	}
+	printf("\n\nLOOK - Total head movements = %d\n",head_movements);
+	free(sorted_requests);
+	head_movements = 0;
 
     // C-LOOK
 
     return 0;
+}
+
+// Selection sort for request lists.
+void sort_list(int *list, int size) {
+	for(int i=0; i<size; i++){
+		int min = list[i];
+		int min_idx = i;
+		for(int j=i+1; j<size; j++){
+			if(list[j] < min){
+				min = list[j];
+				min_idx = j;
+			}
+		}
+		int temp = list[i];
+		list[i] = list[min_idx];
+		list[min_idx] = temp;
+	}
 }
