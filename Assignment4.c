@@ -42,17 +42,50 @@ int main(int argc, char *argv[]) {
 
     // FCFS
 	printf("FCFS DISK SCHEDULING ALGORITHM:\n\n");
+
 	int head_movements = abs(cylinder_numbers[0]-initial_disk_position);
+
 	printf("%d", cylinder_numbers[0]);
 	for(int i=1; i<REQUESTS; i++){
 		printf(", %d", cylinder_numbers[i]);
 		head_movements += abs(cylinder_numbers[i] - cylinder_numbers[i-1]);
 	}
 	printf("\n\nFCFS - Total head movements = %d\n",head_movements);
+	
 	head_movements = 0;
 
-
     // SSTF
+	printf("\nSSTF DISK SCHEDULING ALGORITHM:\n\n");
+
+	int position = initial_disk_position;
+	int *cylinder_numbers_copy = malloc(REQUESTS * sizeof(int));
+	for(int i=0; i<REQUESTS; i++){
+		cylinder_numbers_copy[i] = cylinder_numbers[i];
+	} // creating copy of array for sstf
+
+	for(int i=0; i<REQUESTS; i++){
+		int min_dist = 301;
+		int min_idx = -1;
+		for(int j=0; j<REQUESTS; j++){
+			if(abs(cylinder_numbers_copy[j]-position) < min_dist){
+				min_dist = abs(cylinder_numbers_copy[j]-position);
+				min_idx = j;
+			}
+		}
+		head_movements += min_dist;
+		if(i != REQUESTS -1){
+			printf("%d, ", cylinder_numbers_copy[min_idx]);
+		}else{
+			printf("%d", cylinder_numbers_copy[min_idx]);
+		} // for printing uniformly
+				
+		position = cylinder_numbers_copy[min_idx];
+		cylinder_numbers_copy[min_idx] = 9000; // Mark as visited
+
+	}
+	printf("\n\nSSTF - Total head movements = %d\n",head_movements);
+	free(cylinder_numbers_copy);
+	head_movements = 0;
 
     // SCAN
 
