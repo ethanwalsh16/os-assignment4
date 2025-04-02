@@ -11,6 +11,7 @@
 void sort_list(int *list, int size);
 void scan_algorithm(int sorted_requests[], int initial_disk_position, bool start_left);
 void c_scan_algorithm(int sorted_requests[], int initial_disk_position, bool start_left);
+void c_look_algorithm(int sorted_requests[], int initial_disk_position, bool start_left);
 
 int main(int argc, char *argv[]) {
 
@@ -181,6 +182,7 @@ int main(int argc, char *argv[]) {
 	head_movements = 0;
 
     // C-LOOK
+	c_look_algorithm(sorted_requests, initial_disk_position, start_left);
 
 	// TODO: remove
 	//free(sorted_requests);
@@ -351,6 +353,89 @@ void c_scan_algorithm(int sorted_requests[], int initial_disk_position, bool sta
 		}
 	}
 	printf("\n\nC-SCAN - Total head movements: %d\n", head_movements);
+}
+
+void c_look_algorithm(int sorted_requests[], int initial_disk_position, bool start_left) {
+	printf("\nC-LOOK DISK SCHEDULING ALGORITHM:\n\n");
+	int head_movements;
+	int start_idx;
+
+	// Checking if we start left or right
+	if (start_left) {
+		// Do we have to do a return trip or not?
+		bool go_back = sorted_requests[REQUESTS - 1] > initial_disk_position;
+
+		// Finding the index of the first request to serve
+		start_idx = REQUESTS - 1;
+		for (int i = 0; i < REQUESTS - 1; i++) {
+			if (sorted_requests[i] <= initial_disk_position && sorted_requests[i + 1] > initial_disk_position) {
+				start_idx = i;
+				break;
+			}
+		}
+
+		// Calculating total required head movement
+		if (go_back) {
+			head_movements = abs(initial_disk_position - sorted_requests[0]) + abs(sorted_requests[0] - sorted_requests[REQUESTS - 1]) + abs(sorted_requests[REQUESTS - 1] - sorted_requests[start_idx + 1]);
+		} else {
+			head_movements = abs(initial_disk_position - sorted_requests[0]);
+		}
+
+		// Printing the order of requests
+		if (go_back) {
+			// First trip
+			for (int i = start_idx; i >= 0; i--) {
+				printf("%d, ", sorted_requests[i]);
+			}
+			// Return trip
+			for (int i = REQUESTS - 1; i > start_idx; i--) {
+				printf("%d, ", sorted_requests[i]);
+			}
+		} else {
+			// Only one trip
+			for (int i = REQUESTS - 1; i >= 0; i--) {
+				printf("%d, ", sorted_requests[i]);
+			}
+		}
+
+	} else {
+		// Do we have to do a return trip or not?
+		bool go_back = sorted_requests[0] < initial_disk_position;
+
+		// Finding the index of the first request to serve
+		start_idx = 0;
+		for (int i = REQUESTS - 1; i > 0; i--) {
+			if (sorted_requests[i] >= initial_disk_position && sorted_requests[i - 1] < initial_disk_position) {
+				start_idx = i;
+				break;
+			}
+		}
+
+		// Calculating total required head movement
+		if (go_back) {
+			head_movements = abs(initial_disk_position - sorted_requests[REQUESTS - 1]) + abs(sorted_requests[REQUESTS - 1] - sorted_requests[0]) + abs(sorted_requests[0] - sorted_requests[start_idx - 1]);
+		} else {
+			head_movements = abs(initial_disk_position - sorted_requests[REQUESTS - 1]);
+		}
+
+		// Printing the order of requests
+		if (go_back) {
+			// First trip
+			for (int i = start_idx; i < REQUESTS; i++) {
+				printf("%d, ", sorted_requests[i]);
+			}
+			// Return trip
+			for (int i = 0; i < start_idx; i++) {
+				printf("%d, ", sorted_requests[i]);
+			}
+		} else {
+			// Only one trip
+			for (int i = 0; i < REQUESTS; i++) {
+				printf("%d, ", sorted_requests[i]);
+			}
+		}
+	}
+	printf("\n\nC-LOOK - Total head movements: %d\n", head_movements);
 }
 
 // Selection sort for request lists.
