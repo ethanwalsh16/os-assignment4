@@ -1,7 +1,7 @@
-all: a3
+all: a4
 
-a3: Assignment4.c
-	gcc -o a3 Assignment4.c
+a4: Assignment4.c
+	gcc -o a4 Assignment4.c
 
 clean:
-	rm -rf a3
+	rm -rf a4
