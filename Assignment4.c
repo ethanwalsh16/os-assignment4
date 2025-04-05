@@ -273,7 +273,7 @@ void c_scan_algorithm(int sorted_requests[], int initial_disk_position, bool sta
 
 		// Calculating total required head movement
 		if (go_back) {
-			head_movements = abs(initial_disk_position - MIN_CYLINDER) + abs(MIN_CYLINDER - MAX_CYLINDER) + abs(MAX_CYLINDER - sorted_requests[start_idx + 1]);
+			head_movements = abs(initial_disk_position - MIN_CYLINDER) + abs(MIN_CYLINDER - MAX_CYLINDER) + abs(MAX_CYLINDER - sorted_requests[(start_idx + 1 > REQUESTS - 1) ? 0 : (start_idx + 1)]);
 		} else {
 			head_movements = abs(initial_disk_position - sorted_requests[0]);
 		}
@@ -318,8 +318,9 @@ void c_scan_algorithm(int sorted_requests[], int initial_disk_position, bool sta
 		}
 
 		// Calculating total required head movement
+		
 		if (go_back) {
-			head_movements = abs(initial_disk_position - MAX_CYLINDER) + abs(MAX_CYLINDER - MIN_CYLINDER) + abs(MIN_CYLINDER - sorted_requests[start_idx - 1]);
+			head_movements = abs(initial_disk_position - MAX_CYLINDER) + abs(MAX_CYLINDER - MIN_CYLINDER) + abs(MIN_CYLINDER - sorted_requests[(start_idx - 1 < 0) ? REQUESTS - 1 :start_idx - 1]);
 		} else {
 			head_movements = abs(initial_disk_position - sorted_requests[REQUESTS - 1]);
 		}
@@ -486,7 +487,7 @@ void c_look_algorithm(int sorted_requests[], int initial_disk_position, bool sta
 
 		// Calculating total required head movement
 		if (go_back) {
-			head_movements = abs(initial_disk_position - sorted_requests[0]) + abs(sorted_requests[0] - sorted_requests[REQUESTS - 1]) + abs(sorted_requests[REQUESTS - 1] - sorted_requests[start_idx + 1]);
+			head_movements = abs(initial_disk_position - sorted_requests[0]) + abs(sorted_requests[0] - sorted_requests[REQUESTS - 1]) + abs(sorted_requests[REQUESTS - 1] - sorted_requests[(start_idx + 1 > REQUESTS - 1) ? 0 : start_idx + 1]);
 		} else {
 			head_movements = abs(initial_disk_position - sorted_requests[0]);
 		}
@@ -531,7 +532,7 @@ void c_look_algorithm(int sorted_requests[], int initial_disk_position, bool sta
 
 		// Calculating total required head movement
 		if (go_back) {
-			head_movements = abs(initial_disk_position - sorted_requests[REQUESTS - 1]) + abs(sorted_requests[REQUESTS - 1] - sorted_requests[0]) + abs(sorted_requests[0] - sorted_requests[start_idx - 1]);
+			head_movements = abs(initial_disk_position - sorted_requests[REQUESTS - 1]) + abs(sorted_requests[REQUESTS - 1] - sorted_requests[0]) + abs(sorted_requests[0] - sorted_requests[(start_idx - 1 < 0) ? REQUESTS - 1 : start_idx - 1]);
 		} else {
 			head_movements = abs(initial_disk_position - sorted_requests[REQUESTS - 1]);
 		}
